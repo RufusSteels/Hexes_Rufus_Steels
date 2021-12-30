@@ -26,7 +26,7 @@ namespace DAE.HexSystem
         public event EventHandler<CharacterEventArgs<TPosition>> Moved;
 
         internal bool HasMoved { get; set; }
-        public PieceType PieceType{ get; set; }
+        //public CardType PieceType{ get; set; }
         public int PlayerID { get; set; }
 
         public void PlaceAt(TPosition position)

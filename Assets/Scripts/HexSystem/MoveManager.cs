@@ -10,7 +10,7 @@ namespace DAE.HexSystem
     public class MoveManager <TPosition> 
         where TPosition : IPosition
     {
-        private MultiValueDictionary<PieceType, IMove<TPosition>> _moves = new MultiValueDictionary<PieceType, IMove<TPosition>>();
+        private MultiValueDictionary<CardType, IMove<TPosition>> _moves = new MultiValueDictionary<CardType, IMove<TPosition>>();
 
         private Board<Character<TPosition>, TPosition> _board;
         private Grid<TPosition> _grid;
@@ -25,6 +25,18 @@ namespace DAE.HexSystem
 
             _grid = grid;
 
+
+            _moves.Add(
+                CardType.Pushback,
+                    new ConfigurableMove<TPosition>(board, grid,
+                        (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
+                        .TopRight()
+                        .Right()
+                        .BottomRight()
+                        .BottomLeft()
+                        .Left()
+                        .TopLeft()
+                        .CollectValidPositions()));
             //_moves.Add(
             //    PieceType.Pawn, 
             //        new ConfigurableMove<TPosition>(board, grid, 
@@ -93,7 +105,8 @@ namespace DAE.HexSystem
 
         public List<TPosition> ValidPositionsFor(Character<TPosition> piece)
         {
-            List<TPosition> result = _moves[piece.PieceType]
+            //List<TPosition> result = _moves[piece.PieceType]
+            List<TPosition> result = _moves[CardType.Pushback]
                 .Where((m) => m.CanExecute(piece))
                 .SelectMany((m) => m.Positions(piece))
                 .ToList();
@@ -107,7 +120,8 @@ namespace DAE.HexSystem
 
         public void Move(Character<TPosition> piece, TPosition position)
         {
-            var move = _moves[piece.PieceType]
+            //var move = _moves[piece.PieceType]
+            var move = _moves[CardType.Pushback]
                 .Where(m => m.CanExecute(piece))
                 .Where(m => m.Positions(piece).Contains(position))
                 .First();

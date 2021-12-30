@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem
 {
-    public enum PieceType
+    public enum CardType
     {
-        Pawn, Rook, Bishop, King, Queen, Knight
+        Teleport, Swipe, Slash, Pushback
     }
 }
