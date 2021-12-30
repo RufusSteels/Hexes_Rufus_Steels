@@ -1,0 +1,16 @@
+{
+    "name": "DAE.HexSystem",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1d70b0ceb40fe2f44b49625a87122292"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
