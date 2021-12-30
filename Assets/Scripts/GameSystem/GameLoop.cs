@@ -87,14 +87,14 @@ namespace DAE.GameSystem
             foreach (CharacterView characterView in characterViews)
             {
                 var character = new Character<Tile>();
-                character.PieceType = characterView.PieceType;
+                //character.PieceType = characterView.PieceType;
                 character.PlayerID = characterView.PlayerID;
-
+                
                 characterView.Model = character;
 
-                var (x, y) = _hexPositionHelper.WorldToAxialPosition(/*_board, _grid,*/ characterView.transform.localPosition);
+                var (q, r) = _hexPositionHelper.WorldToAxialPosition(/*_board, _grid,*/ characterView.transform.localPosition);
 
-                if(_grid.TryGetPositionAt(x, y, out Tile tile))
+                if(_grid.TryGetPositionAt(q + _grid.Columns / 2, r + _grid.Rows / 2, out Tile tile))
                 {
                     _board.Place(character, tile);
                 }

@@ -547,12 +547,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bcfa681841071e46be45a8879987fab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tile: {fileID: 4900937599678692349, guid: 614617915d56e1443a482c656782be76, type: 3}
-  _enemy: {fileID: 642924810836272308, guid: 46d33866f87dd0d458318a5ef32a01d2, type: 3}
-  _enemyAmount: 1
   _hexPositionHelper: {fileID: 11400000, guid: 5af44d4831dac74479e553638d4d9d61, type: 2}
-  _distance: 3
-  _spawnOdds: 1
+  _tile: {fileID: 4900937599678692349, guid: 614617915d56e1443a482c656782be76, type: 3}
+  _distance: 4
+  _player: {fileID: 6228970544599824181, guid: bfe4769546b881d4a94b2afd88f7d829, type: 3}
+  _enemy: {fileID: 1575116122378543804, guid: a9cfbfd6fb03c2d43825eb7d08c06441, type: 3}
+  _spawnOdds: 0.25
 --- !u!4 &1806074809
 Transform:
   m_ObjectHideFlags: 0

@@ -13,21 +13,21 @@ namespace DAE.GameSystem
     public class ClickEventArgs : EventArgs
     {
         public Character<Tile> Character { get; }
-        public ClickEventArgs(Character<Tile> piece)
+        public ClickEventArgs(Character<Tile> character)
         {
-            Character = piece;
+            Character = character;
         }
     }
 
     public class CharacterView : MonoBehaviour, IPointerClickHandler
     {
-        [SerializeField]
-        private PieceType _pieceType;
+       //[SerializeField]
+       //private PieceType _pieceType;
 
         [SerializeField]
         private int _playerID;
 
-        public PieceType PieceType => _pieceType;
+       //public PieceType PieceType => _pieceType;
         public int PlayerID => _playerID;
 
         //event betekent dat callback niet van buitenaf kan opgeroepen worden
@@ -39,31 +39,31 @@ namespace DAE.GameSystem
         //geen public of private... dan internal -> public in dezelfde assembly
         [SerializeField]
         private UnityEvent<bool> OnHighlight;
-        private Character<Tile> model;
+        private Character<Tile> _model;
 
         public event EventHandler<ClickEventArgs> Clicked;
 
         public Character<Tile> Model 
         { 
-            get => model;
+            get => _model;
             set
             {
-                if (model != null)
+                if (_model != null)
                 {
                     //model.ActivationStatusChanged -= OnCharacterActivationChanged;
-                    model.Placed -= OnCharacterPlaced;
-                    model.Taken -= OnCharacterTaken;
-                    model.Moved -= OnCharacterMoved;
+                    _model.Placed -= OnCharacterPlaced;
+                    _model.Taken -= OnCharacterTaken;
+                    _model.Moved -= OnCharacterMoved;
                 }
-
-                model = value;
-
-                if (model != null)
+        
+                _model = value;
+        
+                if (_model != null)
                 {
                     //model.ActivationStatusChanged += OnCharacterActivationChanged;
-                    model.Placed += OnCharacterPlaced;
-                    model.Taken += OnCharacterTaken;
-                    model.Moved += OnCharacterMoved;
+                    _model.Placed += OnCharacterPlaced;
+                    _model.Taken += OnCharacterTaken;
+                    _model.Moved += OnCharacterMoved;
                 }
             }
         }

@@ -25,70 +25,70 @@ namespace DAE.HexSystem
 
             _grid = grid;
 
-            _moves.Add(
-                PieceType.Pawn, 
-                    new ConfigurableMove<TPosition>(board, grid, 
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .North(1, MovementHelper<TPosition>.Empty)
-                                        .NorthEast(1, MovementHelper<TPosition>.ContainsEnemy)
-                                        .NorthWest(1, MovementHelper<TPosition>.ContainsEnemy)
-                                        .CollectValidPositions()));
-
-            _moves.Add(
-                PieceType.Queen,
-                    new ConfigurableMove<TPosition>(board, grid,
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .North()
-                                        .NorthEast()
-                                        .East()
-                                        .SouthEast()
-                                        .South()
-                                        .SouthWest()
-                                        .West()
-                                        .NorthWest()
-                                        .CollectValidPositions()));
-
-            _moves.Add(
-                PieceType.King,
-                    new ConfigurableMove<TPosition>(board, grid,
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .North(1)
-                                        .NorthEast(1)
-                                        .East(1)
-                                        .SouthEast(1)
-                                        .South(1)
-                                        .SouthWest(1)
-                                        .West(1)
-                                        .NorthWest(1)
-                                        .CollectValidPositions()));
-
-            _moves.Add(
-                PieceType.Bishop,
-                    new ConfigurableMove<TPosition>(board, grid,
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .NorthEast()
-                                        .SouthEast()
-                                        .SouthWest()
-                                        .NorthWest()
-                                        .CollectValidPositions()));
-
-            _moves.Add(
-                PieceType.Rook,
-                    new ConfigurableMove<TPosition>(board, grid,
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .North()
-                                        .East()
-                                        .South()
-                                        .West()
-                                        .CollectValidPositions()));
-
-            _moves.Add(
-                PieceType.Knight,
-                    new ConfigurableMove<TPosition>(board, grid,
-                        (b, g, p) => new MovementHelper<TPosition>(b, g, p)
-                                        .KnightMoves(1)
-                                        .CollectValidPositions()));
-            //_moves.Add(PieceType.Pawn, new PawnDoubleMove(board, grid));
+            //_moves.Add(
+            //    PieceType.Pawn, 
+            //        new ConfigurableMove<TPosition>(board, grid, 
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .North(1, MovementHelper<TPosition>.Empty)
+            //                            .NorthEast(1, MovementHelper<TPosition>.ContainsEnemy)
+            //                            .NorthWest(1, MovementHelper<TPosition>.ContainsEnemy)
+            //                            .CollectValidPositions()));
+            //
+            //_moves.Add(
+            //    PieceType.Queen,
+            //        new ConfigurableMove<TPosition>(board, grid,
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .North()
+            //                            .NorthEast()
+            //                            .East()
+            //                            .SouthEast()
+            //                            .South()
+            //                            .SouthWest()
+            //                            .West()
+            //                            .NorthWest()
+            //                            .CollectValidPositions()));
+            //
+            //_moves.Add(
+            //    PieceType.King,
+            //        new ConfigurableMove<TPosition>(board, grid,
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .North(1)
+            //                            .NorthEast(1)
+            //                            .East(1)
+            //                            .SouthEast(1)
+            //                            .South(1)
+            //                            .SouthWest(1)
+            //                            .West(1)
+            //                            .NorthWest(1)
+            //                            .CollectValidPositions()));
+            //
+            //_moves.Add(
+            //    PieceType.Bishop,
+            //        new ConfigurableMove<TPosition>(board, grid,
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .NorthEast()
+            //                            .SouthEast()
+            //                            .SouthWest()
+            //                            .NorthWest()
+            //                            .CollectValidPositions()));
+            //
+            //_moves.Add(
+            //    PieceType.Rook,
+            //        new ConfigurableMove<TPosition>(board, grid,
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .North()
+            //                            .East()
+            //                            .South()
+            //                            .West()
+            //                            .CollectValidPositions()));
+            //
+            //_moves.Add(
+            //    PieceType.Knight,
+            //        new ConfigurableMove<TPosition>(board, grid,
+            //            (b, g, p) => new MovementHelper<TPosition>(b, g, p)
+            //                            .KnightMoves(1)
+            //                            .CollectValidPositions()));
+            ////_moves.Add(PieceType.Pawn, new PawnDoubleMove(board, grid));
         }
 
         public List<TPosition> ValidPositionsFor(Character<TPosition> piece)

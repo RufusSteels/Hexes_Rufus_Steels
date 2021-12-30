@@ -8,29 +8,24 @@ namespace DAE.GameSystem
     public class BoardGenerator : MonoBehaviour
     {
         [SerializeField]
-        private GameObject _tile;
-
-        [SerializeField]
-        private GameObject _enemy;
-        [SerializeField]
-        private int _enemyAmount = 1;
-
-        [SerializeField]
         private HexPositionHelper _hexPositionHelper;
 
-        [SerializeField] [Range(1,10)]
+        [SerializeField]
+        private GameObject _tile;
+        [SerializeField] [Range(1, 10)]
         private int _distance;
 
+        [SerializeField]
+        private GameObject _player;
+        [SerializeField]
+        private GameObject _enemy;
         [SerializeField] [Range(0, 1)]
         private float _spawnOdds = .2f;
+        //[SerializeField]
+        //private int _enemyAmount = 1;
 
-        public int Distance 
-        { 
-            get 
-            { 
-                return _distance; 
-            } 
-        }
+
+        public int Distance => _distance;
 
         private void OnValidate()
         {
@@ -81,7 +76,7 @@ namespace DAE.GameSystem
             } 
         }
 
-        private void CreateEnemies()
+        private void CreateCharacters()
         {
             Tile[] tiles = GameObject.FindObjectsOfType<Tile>();
 
@@ -92,6 +87,12 @@ namespace DAE.GameSystem
                     //Debug.Log("enemy spawned");
                     var enemy = Instantiate(_enemy, gameObject.transform);
                     enemy.transform.localPosition = tile.gameObject.transform.localPosition;
+                }
+
+                if (_hexPositionHelper.WorldToAxialPosition(tile.transform.position) == (0, 0))
+                {
+                    var player = Instantiate(_player, gameObject.transform);
+                    player.transform.localPosition = tile.gameObject.transform.localPosition;
                 }
             }
 
@@ -109,7 +110,7 @@ namespace DAE.GameSystem
         {
             ClearBoard();
             CreateBoard();
-            CreateEnemies();
+            CreateCharacters();
         }
     }
 }

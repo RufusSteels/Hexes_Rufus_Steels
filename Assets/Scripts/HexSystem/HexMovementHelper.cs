@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DAE.HexSystem
 {
-    internal class MovementHelper<TPosition>
+    internal class HexMovementHelper<TPosition>
         where TPosition : IPosition
     {
         private Board<Character<TPosition>, TPosition> _board;
@@ -16,47 +16,27 @@ namespace DAE.HexSystem
         private Character<TPosition> _piece;
         private List<TPosition> _validPositions = new List<TPosition>();
 
-        public MovementHelper(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece)
+        public HexMovementHelper(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece)
         {
             _board = board;
             _grid = grid;
             _piece = piece;
         }
 
-        public MovementHelper<TPosition> North(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(0, 1, maxSteps, validators); //expressionBody één lijn code voor een methode kan ook zo geschreven worden
-        public MovementHelper<TPosition> East(int maxSteps = int.MaxValue, params Validator[] validators)
+        public HexMovementHelper<TPosition> TopRight(int maxSteps = int.MaxValue, params Validator[] validators)
+            => Collect(1, -1, maxSteps, validators); //expressionBody één lijn code voor een methode kan ook zo geschreven worden
+        public HexMovementHelper<TPosition> Right(int maxSteps = int.MaxValue, params Validator[] validators)
             => Collect(1, 0, maxSteps, validators);
-        public MovementHelper<TPosition> South(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(0, -1, maxSteps, validators);
-        public MovementHelper<TPosition> West(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(-1, 0, maxSteps, validators);
-
-        public MovementHelper<TPosition> NorthEast(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(1, 1, maxSteps, validators);
-        public MovementHelper<TPosition> SouthEast(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(1, -1, maxSteps, validators);
-        public MovementHelper<TPosition> SouthWest(int maxSteps = int.MaxValue, params Validator[] validators)
-            => Collect(-1, -1, maxSteps, validators);
-        public MovementHelper<TPosition> NorthWest(int maxSteps = int.MaxValue, params Validator[] validators)
+        public HexMovementHelper<TPosition> BottomRight(int maxSteps = int.MaxValue, params Validator[] validators)
+            => Collect(0, 1, maxSteps, validators);
+        public HexMovementHelper<TPosition> BottomLeft(int maxSteps = int.MaxValue, params Validator[] validators)
             => Collect(-1, 1, maxSteps, validators);
+        public HexMovementHelper<TPosition> Left(int maxSteps = int.MaxValue, params Validator[] validators)
+            => Collect(-1, 0, maxSteps, validators);
+        public HexMovementHelper<TPosition> TopLeft(int maxSteps = int.MaxValue, params Validator[] validators)
+            => Collect(0, -1, maxSteps, validators);
 
-        public MovementHelper<TPosition> KnightMoves(int maxSteps = int.MaxValue, params Validator[] validators)
-        {
-            Collect(2, 1, maxSteps, validators);
-            Collect(2, -1, maxSteps, validators);
-            Collect(-2, 1, maxSteps, validators);
-            Collect(-2, -1, maxSteps, validators);
-
-            Collect(1, 2, maxSteps, validators);
-            Collect(1, -2, maxSteps, validators);
-            Collect(-1, 2, maxSteps, validators);
-            Collect(-1, -2, maxSteps, validators);
-
-            return this;
-        }
-
-        public MovementHelper<TPosition> Collect(int xOffset, int yOffset, int maxSteps = int.MaxValue, params Validator[] validators)
+        public HexMovementHelper<TPosition> Collect(int xOffset, int yOffset, int maxSteps = int.MaxValue, params Validator[] validators)
         {
             xOffset *= (_piece.PlayerID == 0) ? 1 : -1;
             yOffset *= (_piece.PlayerID == 0) ? 1 : -1;
