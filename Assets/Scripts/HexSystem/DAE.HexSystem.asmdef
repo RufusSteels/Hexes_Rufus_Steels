@@ -2,7 +2,8 @@
     "name": "DAE.HexSystem",
     "rootNamespace": "",
     "references": [
-        "GUID:1d70b0ceb40fe2f44b49625a87122292"
+        "GUID:1d70b0ceb40fe2f44b49625a87122292",
+        "GUID:66b06aba389dea345a9a615d1814b3d8"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

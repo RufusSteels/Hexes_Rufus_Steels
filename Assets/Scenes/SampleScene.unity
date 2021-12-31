@@ -216,6 +216,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!4 &824439507 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2492975774353041420, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+  m_PrefabInstance: {fileID: 1486100186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +232,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -299,6 +305,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
+--- !u!224 &1395051764 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1508764004649482890, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+  m_PrefabInstance: {fileID: 1486100186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1486100186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -368,7 +395,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2189331369560636701, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
       propertyPath: m_Name
-      value: Hand
+      value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189331369560636701, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2971892731667637057, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
       propertyPath: m_AnchorMax.y
@@ -550,6 +581,11 @@ MonoBehaviour:
   _hexPositionHelper: {fileID: 11400000, guid: 5af44d4831dac74479e553638d4d9d61, type: 2}
   _tile: {fileID: 4900937599678692349, guid: 614617915d56e1443a482c656782be76, type: 3}
   _distance: 4
+  _deckSize: 13
+  _handSize: 5
+  _deck: {fileID: 824439507}
+  _hand: {fileID: 1395051764}
+  _card: {fileID: 5952518479919418928, guid: 5bf85a8e08275854dba5c933d0a950d9, type: 3}
   _player: {fileID: 6228970544599824181, guid: bfe4769546b881d4a94b2afd88f7d829, type: 3}
   _enemy: {fileID: 1575116122378543804, guid: a9cfbfd6fb03c2d43825eb7d08c06441, type: 3}
   _spawnOdds: 0.25

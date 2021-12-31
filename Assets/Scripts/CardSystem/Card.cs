@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,50 @@ using UnityEngine.UI;
 
 namespace DAE.CardSystem
 {
+    public class BeginDragEventArgs : EventArgs
+    {
+
+    }
+    public class DragEventArgs : EventArgs
+    {
+
+    }
+    public class EndDragEventArgs : EventArgs
+    {
+
+    }
+    public class DropEventArgs : EventArgs
+    {
+
+    }
+
     [RequireComponent(typeof(Image))]
-    public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
     {
         [SerializeField]
         private GameObject _cardPrefab;
         private GameObject _cardPreview;
         private RectTransform _draggingPlane;
+
+        [SerializeField]
+        private CardType _cardType = CardType.Teleport;
+
+        public CardType CardType
+        {
+            get
+            {
+                return _cardType;
+            }
+            set
+            {
+                _cardType = value;
+            }
+        }
+
+        public event EventHandler<BeginDragEventArgs> BeganDrag;
+        public event EventHandler<DragEventArgs> Dragged;
+        public event EventHandler<EndDragEventArgs> EndedDrag;
+        public event EventHandler<DropEventArgs> Dropped;
 
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -48,6 +86,11 @@ namespace DAE.CardSystem
         {
             if (_cardPreview != null)
                 Destroy(_cardPreview);
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            throw new System.NotImplementedException();
         }
 
         static public T FindInParents<T>(GameObject go) where T : Component

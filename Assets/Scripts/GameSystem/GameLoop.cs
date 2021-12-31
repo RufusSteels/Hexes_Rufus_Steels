@@ -1,4 +1,5 @@
 using DAE.BoardSystem;
+using DAE.CardSystem;
 using DAE.HexSystem;
 using DAE.SelectionSystem;
 using System;
@@ -30,11 +31,16 @@ namespace DAE.GameSystem
         void Start()
         {
             _board = new Board<Character<Tile>, Tile>();
+            _board.PieceMoved += (s, e) =>
+            {
+                _currentPlayerID = (_currentPlayerID + 1) % 2;
+            };
+
             _grid = new Grid<Tile>(2 * _boardGenerator.Distance + 1, 2 * _boardGenerator.Distance + 1);
 
             _moveManager = new MoveManager<Tile>(_board, _grid);
-            _selectionManager = new SelectionManager<Character<Tile>>();
 
+            _selectionManager = new SelectionManager<Character<Tile>>();
             _selectionManager.Selected += (s, e) =>
             {
                 //e.SelectableItem.Activate = true;
@@ -44,7 +50,6 @@ namespace DAE.GameSystem
                     tile.Highlight = true;
                 }
             };
-
             _selectionManager.Deselected += (s, e) =>
             {
                 //e.SelectableItem.Activate = false;
@@ -55,15 +60,11 @@ namespace DAE.GameSystem
                 }
             };
 
-            _board.PieceMoved += (s, e) =>
-            {
-                _currentPlayerID = (_currentPlayerID + 1) % 2;
-            };
-
             _boardGenerator.ResetBoard();
 
             ConnectTile();
             ConnectPiece();
+            ConnectCards();
         }
 
         private void ConnectTile()
@@ -99,7 +100,19 @@ namespace DAE.GameSystem
                     _board.Place(character, tile);
                 }
 
-                characterView.Clicked += (s, e) => Select(e.Character); 
+                //characterView.Clicked += (s, e) => Select(e.Character); 
+            }
+        }
+
+        private void ConnectCards()
+        {
+            Card[] cards = FindObjectsOfType<Card>();
+            foreach(Card card in cards)
+            {
+                card.BeganDrag  += (s, e) => new NotImplementedException();
+                card.Dragged    += (s, e) => new NotImplementedException();
+                card.EndedDrag  += (s, e) => new NotImplementedException();
+                card.Dropped    += (s, e) => new NotImplementedException();
             }
         }
 

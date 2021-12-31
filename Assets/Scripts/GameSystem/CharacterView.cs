@@ -95,7 +95,7 @@ namespace DAE.GameSystem
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log(this.gameObject.name);
-
+        
             OnClicked(new ClickEventArgs(Model));
         }
 
