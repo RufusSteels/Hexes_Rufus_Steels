@@ -100,7 +100,7 @@ namespace DAE.GameSystem
                     _board.Place(character, tile);
                 }
 
-                //characterView.Clicked += (s, e) => Select(e.Character); 
+                characterView.Clicked += (s, e) => Select(e.Character); 
             }
         }
 

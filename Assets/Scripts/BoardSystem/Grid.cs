@@ -30,6 +30,15 @@ namespace DAE.BoardSystem
             return _positions.TryGetValue(position, out coordinate);
         }
 
+        public List<TPosition> GetAllPositions()
+        {
+            List<TPosition> positions = new List<TPosition>();
+            foreach(KeyValuePair<TPosition, (int, int)> position in _positions)
+            {
+                positions.Add(position.Key);
+            }
+            return positions;
+        }
         public void Register(TPosition position, int x, int y)
         {
             if (x < 0 || x >= Columns)

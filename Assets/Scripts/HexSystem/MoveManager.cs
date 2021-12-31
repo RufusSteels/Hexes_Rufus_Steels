@@ -26,22 +26,53 @@ namespace DAE.HexSystem
             _grid = grid;
 
             _moves.Add(
+                CardType.Teleport,
+                    new ConfigurableMove<TPosition>(board, grid,
+                        (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
+                        .All(HexMovementHelper<TPosition>.Empty)
+                        .CollectValidPositions()));
+
+            _moves.Add(
                 CardType.Pushback,
                     new ConfigurableMove<TPosition>(board, grid,
                         (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
-                        .TopRight()
-                        .Right()
-                        .BottomRight()
-                        .BottomLeft()
-                        .Left()
-                        .TopLeft()
+                        .TopRight(1)
+                        .Right(1)
+                        .BottomRight(1)
+                        .BottomLeft(1)
+                        .Left(1)
+                        .TopLeft(1)
+                        .CollectValidPositions()));
+
+            _moves.Add(
+                CardType.Swipe,
+                    new ConfigurableMove<TPosition>(board, grid,
+                        (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
+                        .TopRight(1)
+                        .Right(1)
+                        .BottomRight(1)
+                        .BottomLeft(1)
+                        .Left(1)
+                        .TopLeft(1)
+                        .CollectValidPositions()));
+
+            _moves.Add(
+                CardType.Slash,
+                    new ConfigurableMove<TPosition>(board, grid,
+                        (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
+                        .TopRight(1)
+                        .Right(1)
+                        .BottomRight(1)
+                        .BottomLeft(1)
+                        .Left(1)
+                        .TopLeft(1)
                         .CollectValidPositions()));
         }
 
         public List<TPosition> ValidPositionsFor(Character<TPosition> piece)
         {
             //List<TPosition> result = _moves[piece.PieceType]
-            List<TPosition> result = _moves[CardType.Pushback]
+            List<TPosition> result = _moves[CardType.Teleport]
                 .Where((m) => m.CanExecute(piece))
                 .SelectMany((m) => m.Positions(piece))
                 .ToList();
@@ -56,7 +87,7 @@ namespace DAE.HexSystem
         public void Move(Character<TPosition> piece, TPosition position)
         {
             //var move = _moves[piece.PieceType]
-            var move = _moves[CardType.Pushback]
+            var move = _moves[CardType.Teleport]
                 .Where(m => m.CanExecute(piece))
                 .Where(m => m.Positions(piece).Contains(position))
                 .First();
