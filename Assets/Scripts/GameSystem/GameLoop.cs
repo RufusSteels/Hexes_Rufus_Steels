@@ -25,6 +25,7 @@ namespace DAE.GameSystem
         private MoveManager<Tile> _moveManager;
 
         private int _currentPlayerID;
+        private CardType _currentCard = CardType.Teleport;
 
 
         // Start is called before the first frame update
@@ -44,7 +45,7 @@ namespace DAE.GameSystem
             _selectionManager.Selected += (s, e) =>
             {
                 //e.SelectableItem.Activate = true;
-                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem);
+                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, _currentCard);
                 foreach (var tile in tiles)
                 {
                     tile.Highlight = true;
@@ -53,7 +54,7 @@ namespace DAE.GameSystem
             _selectionManager.Deselected += (s, e) =>
             {
                 //e.SelectableItem.Activate = false;
-                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem);
+                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, _currentCard);
                 foreach (var tile in tiles)
                 {
                     tile.Highlight = false;
@@ -75,11 +76,7 @@ namespace DAE.GameSystem
                 var (q, r) = _hexPositionHelper.WorldToAxialPosition(/*_board, _grid, */tile.transform.localPosition);
                 tile.Clicked += (s, e) => Select(e.Tile);
                 _grid.Register(tile, q + _grid.Columns / 2, r + _grid.Rows / 2);
-
-                //Debug.Log($"connected {tile}: ({q}, {r})");
-                //tile.Highlight = true;
             }
-            //Debug.Log("Loop Ended");
         }
 
         private void ConnectPiece()
@@ -100,19 +97,20 @@ namespace DAE.GameSystem
                     _board.Place(character, tile);
                 }
 
-                characterView.Clicked += (s, e) => Select(e.Character); 
+                //characterView.Clicked += (s, e) => Select(e.Character); 
             }
         }
 
         private void ConnectCards()
         {
-            Card[] cards = FindObjectsOfType<Card>();
-            foreach(Card card in cards)
+            CardView[] cards = FindObjectsOfType<CardView>();
+            foreach(CardView card in cards)
             {
-                card.BeganDrag  += (s, e) => new NotImplementedException();
-                card.Dragged    += (s, e) => new NotImplementedException();
-                card.EndedDrag  += (s, e) => new NotImplementedException();
-                card.Dropped    += (s, e) => new NotImplementedException();
+                card.BeganDrag  += (s, e) => HighlightValidTiles(e.Character, e.CardType);
+                //card.Dragged    += (s, e) => new NotImplementedException();
+                card.EndedDrag += (s, e) => DeselectAll();
+                //card.Dropped    += (s, e) => new NotImplementedException();
+                //card.Dropped += (s, e) => DeselectAll();
             }
         }
 
@@ -128,31 +126,37 @@ namespace DAE.GameSystem
                 {
                     var selectedPiece = _selectionManager.SelectableItem;
                     _selectionManager.Deselect(selectedPiece);
-
-                    var validPositions = _moveManager.ValidPositionsFor(selectedPiece);
+            
+                    var validPositions = _moveManager.ValidPositionsFor(selectedPiece, _currentCard);
                     if (validPositions.Contains(tile))
                     {
                         _selectionManager.DeselectAll();
-                        _moveManager.Move(selectedPiece, tile);
+                        _moveManager.Move(selectedPiece, tile, _currentCard);
                     }
                 }
             }
         }
 
-        public void Select(Character<Tile> piece)
+        public void Select(Character<Tile> character)
         {
-            if (piece.PlayerID == _currentPlayerID)
-            {
-                _selectionManager.DeselectAll();
-                _selectionManager.Select(piece);
-            }
-            else
-            {
-                if (_board.TryGetPosition(piece, out var tile)) 
-                {
-                    Select(tile);
-                }
-            }
+           if (character.PlayerID == _currentPlayerID)
+           {
+               _selectionManager.DeselectAll();
+               _selectionManager.Select(character);
+           }
+           else
+           {
+               if (_board.TryGetPosition(character, out var tile)) 
+               {
+                   Select(tile);
+               }
+           }
+        }
+
+        public void HighlightValidTiles(Character<Tile> character, CardType cardType)
+        {
+            _currentCard = cardType;
+            Select(character);
         }
 
         public void DeselectAll()

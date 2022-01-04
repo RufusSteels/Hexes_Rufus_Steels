@@ -28,9 +28,9 @@ namespace DAE.GameSystem
         [SerializeField]
         private GameObject _card;
         [SerializeField]
-        private GameObject _player;
+        private GameObject _playerPrefab;
         [SerializeField]
-        private GameObject _enemy;
+        private GameObject _enemyPrefab;
         [SerializeField] [Range(0, 1)]
         private float _spawnOdds = .2f;
         //[SerializeField]
@@ -91,21 +91,6 @@ namespace DAE.GameSystem
             }
         }
 
-        private void CreateHand()
-        {
-            for (int i = 0; i < _deckSize; i++)
-            {
-                var current = Instantiate(_card, _deck);
-                if(current.TryGetComponent<Card>(out Card card))
-                    card.CardType = (CardType) UnityEngine.Random.Range(0, 4);
-            }
-
-            for (int i = 0; i < _handSize; i++)
-            {
-                _deck.GetChild(0).parent = _hand;
-            }
-        }
-
         private void CreateCharacters()
         {
             Tile[] tiles = GameObject.FindObjectsOfType<Tile>();
@@ -115,13 +100,13 @@ namespace DAE.GameSystem
                 if(UnityEngine.Random.value < _spawnOdds && _hexPositionHelper.WorldToAxialPosition(tile.transform.position) != (0, 0))
                 {
                     //Debug.Log("enemy spawned");
-                    var enemy = Instantiate(_enemy, gameObject.transform);
+                    var enemy = Instantiate(_enemyPrefab, gameObject.transform);
                     enemy.transform.localPosition = tile.gameObject.transform.localPosition;
                 }
 
                 if (_hexPositionHelper.WorldToAxialPosition(tile.transform.position) == (0, 0))
                 {
-                    var player = Instantiate(_player, gameObject.transform);
+                    var player = Instantiate(_playerPrefab, gameObject.transform);
                     player.transform.localPosition = tile.gameObject.transform.localPosition;
                 }
             }
@@ -136,12 +121,27 @@ namespace DAE.GameSystem
             //}
         }
 
+        private void CreateHand()
+        {
+            for (int i = 0; i < _deckSize; i++)
+            {
+                var current = Instantiate(_card, _deck);
+                if (current.TryGetComponent<CardView>(out CardView card))
+                    card.CardType = (CardType)UnityEngine.Random.Range(0, 4);
+            }
+
+            for (int i = 0; i < _handSize; i++)
+            {
+                _deck.GetChild(0).SetParent(_hand);
+            }
+        }
+
         public void ResetBoard()
         {
             ClearBoard();
             CreateBoard();
-            CreateHand();
             CreateCharacters();
+            CreateHand();
         }
     }
 }

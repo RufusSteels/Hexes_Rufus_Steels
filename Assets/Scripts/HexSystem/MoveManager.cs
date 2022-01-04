@@ -69,10 +69,10 @@ namespace DAE.HexSystem
                         .CollectValidPositions()));
         }
 
-        public List<TPosition> ValidPositionsFor(Character<TPosition> piece)
+        public List<TPosition> ValidPositionsFor(Character<TPosition> piece, CardType cardType)
         {
             //List<TPosition> result = _moves[piece.PieceType]
-            List<TPosition> result = _moves[CardType.Teleport]
+            List<TPosition> result = _moves[cardType]
                 .Where((m) => m.CanExecute(piece))
                 .SelectMany((m) => m.Positions(piece))
                 .ToList();
@@ -84,10 +84,10 @@ namespace DAE.HexSystem
             return result;
         }
 
-        public void Move(Character<TPosition> piece, TPosition position)
+        public void Move(Character<TPosition> piece, TPosition position, CardType cardType)
         {
             //var move = _moves[piece.PieceType]
-            var move = _moves[CardType.Teleport]
+            var move = _moves[cardType]
                 .Where(m => m.CanExecute(piece))
                 .Where(m => m.Positions(piece).Contains(position))
                 .First();

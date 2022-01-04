@@ -1,3 +1,5 @@
+using DAE.CardSystem;
+using DAE.HexSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,11 +7,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DAE.CardSystem
+namespace DAE.GameSystem
 {
     public class BeginDragEventArgs : EventArgs
     {
-
+        public Character<Tile> Character;
+        public CardType CardType;
+        
+        public BeginDragEventArgs(Character<Tile> character, CardType cardType)
+        {
+            Character = character;
+            CardType = cardType;
+        }
     }
     public class DragEventArgs : EventArgs
     {
@@ -25,7 +34,7 @@ namespace DAE.CardSystem
     }
 
     [RequireComponent(typeof(Image))]
-    public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    public class CardView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
     {
         [SerializeField]
         private GameObject _cardPrefab;
@@ -63,6 +72,18 @@ namespace DAE.CardSystem
             _draggingPlane = canvas.transform as RectTransform;
 
             SetDraggedPosition(eventData);
+
+            var characters = FindObjectsOfType<CharacterView>();
+            Character<Tile> player = null;
+            foreach (CharacterView view in characters)
+            {
+                if (view.PlayerID == 0)
+                {
+                    player = view.Model;
+                }
+            }
+            var handler = BeganDrag;
+            handler?.Invoke(this, new BeginDragEventArgs(player, _cardType));
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -86,6 +107,9 @@ namespace DAE.CardSystem
         {
             if (_cardPreview != null)
                 Destroy(_cardPreview);
+
+            var handler = EndedDrag;
+            handler?.Invoke(this, new EndDragEventArgs());
         }
 
         public void OnDrop(PointerEventData eventData)

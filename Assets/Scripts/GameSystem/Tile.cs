@@ -15,7 +15,7 @@ namespace DAE.GameSystem
         }
     }
 
-    public class Tile : MonoBehaviour, IPointerClickHandler, IPosition, IDropHandler
+    public class Tile : MonoBehaviour, IPointerClickHandler, IPosition
     {
         public event EventHandler<TileEventArgs> Clicked;
 
@@ -44,14 +44,6 @@ namespace DAE.GameSystem
         {
             var handler = Clicked;
             handler?.Invoke(this, e);
-        }
-        public void OnDrop(PointerEventData data)
-        {
-            if (data.pointerDrag != null)
-            {
-                Debug.Log("Dropped object was: " + data.pointerDrag);
-                Highlight = true;
-            }
         }
     }
 }
