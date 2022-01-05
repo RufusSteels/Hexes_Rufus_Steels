@@ -43,7 +43,6 @@ namespace DAE.SelectionSystem
 
         public bool Select(TSelectableItem selectableItem)
         {
-            Debug.Log($"Selected {selectableItem}");
             if (_selectableItems.Add(selectableItem))
             {
                 OnSelected(new SelectionEventArgs<TSelectableItem>(selectableItem));
@@ -52,14 +51,11 @@ namespace DAE.SelectionSystem
         }
         public bool Deselect(TSelectableItem selectableItem)
         {
-            Debug.Log($"Deselected {selectableItem}");
             if (_selectableItems.Remove(selectableItem))
             {
                 OnDeselected(new SelectionEventArgs<TSelectableItem>(selectableItem));
             }
             return false;
-
-
         }
 
 

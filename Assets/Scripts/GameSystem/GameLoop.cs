@@ -25,6 +25,8 @@ namespace DAE.GameSystem
         private MoveManager<Tile> _moveManager;
 
         private int _currentPlayerID;
+        private CharacterView _currentPlayer;
+        private int _playerAmount = 1;
         private CardType _currentCard = CardType.Teleport;
 
 
@@ -34,7 +36,26 @@ namespace DAE.GameSystem
             _board = new Board<Character<Tile>, Tile>();
             _board.PieceMoved += (s, e) =>
             {
-                _currentPlayerID = (_currentPlayerID + 1) % 2;
+                _currentPlayerID = (_currentPlayerID + 1) % _playerAmount;
+                var characters = FindObjectsOfType<CharacterView>();
+                foreach (CharacterView character in characters)
+                {
+                    if(character.PlayerID == _currentPlayerID)
+                    {
+                        _currentPlayer = character;
+                    }
+                }
+            };
+            _board.PiecePlaced += (s, e) =>
+            {
+                var characters = FindObjectsOfType<CharacterView>();
+                foreach (CharacterView character in characters)
+                {
+                    if (character.PlayerID == _currentPlayerID)
+                    {
+                        _currentPlayer = character;
+                    }
+                }
             };
 
             _grid = new Grid<Tile>(2 * _boardGenerator.Distance + 1, 2 * _boardGenerator.Distance + 1);
@@ -74,7 +95,31 @@ namespace DAE.GameSystem
             foreach (Tile tile in tiles)
             {
                 var (q, r) = _hexPositionHelper.WorldToAxialPosition(/*_board, _grid, */tile.transform.localPosition);
-                tile.Clicked += (s, e) => Select(e.Tile);
+                tile.Dropped += (s, e) => Select(e.Tile);
+                tile.DragEntered += (s, e) => 
+                {
+                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, _currentCard);
+                    foreach (Tile tile in validPositions)
+                    {
+                        tile.Highlight = false;
+                    }
+                    if (validPositions.Contains(tile))
+                    {
+                        tile.Highlight = true;
+                    }
+                    else
+                    {
+                        HighlightDroppableTiles(_currentPlayer.Model, _currentCard);
+                    }
+                };
+                tile.DragExited += (s, e) =>
+                {
+                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, _currentCard);
+                    foreach (Tile tile in validPositions)
+                    {
+                        tile.Highlight = false;
+                    }
+                };
                 _grid.Register(tile, q + _grid.Columns / 2, r + _grid.Rows / 2);
             }
         }
@@ -85,7 +130,6 @@ namespace DAE.GameSystem
             foreach (CharacterView characterView in characterViews)
             {
                 var character = new Character<Tile>();
-                //character.PieceType = characterView.PieceType;
                 character.PlayerID = characterView.PlayerID;
                 
                 characterView.Model = character;
@@ -96,8 +140,6 @@ namespace DAE.GameSystem
                 {
                     _board.Place(character, tile);
                 }
-
-                //characterView.Clicked += (s, e) => Select(e.Character); 
             }
         }
 
@@ -106,7 +148,7 @@ namespace DAE.GameSystem
             CardView[] cards = FindObjectsOfType<CardView>();
             foreach(CardView card in cards)
             {
-                card.BeganDrag  += (s, e) => HighlightValidTiles(e.Character, e.CardType);
+                card.BeganDrag  += (s, e) => HighlightDroppableTiles(e.Character, e.CardType);
                 //card.Dragged    += (s, e) => new NotImplementedException();
                 card.EndedDrag += (s, e) => DeselectAll();
                 //card.Dropped    += (s, e) => new NotImplementedException();
@@ -131,7 +173,7 @@ namespace DAE.GameSystem
                     if (validPositions.Contains(tile))
                     {
                         _selectionManager.DeselectAll();
-                        _moveManager.Move(selectedPiece, tile, _currentCard);
+                        _moveManager.Execute(selectedPiece, tile, _currentCard);
                     }
                 }
             }
@@ -153,7 +195,13 @@ namespace DAE.GameSystem
            }
         }
 
-        public void HighlightValidTiles(Character<Tile> character, CardType cardType)
+        public void HighlightDroppableTiles(Character<Tile> character, CardType cardType)
+        {
+            _currentCard = cardType;
+            Select(character);
+        }
+        
+        public void HighlightAffectedTiles(Character<Tile> character, CardType cardType)
         {
             _currentCard = cardType;
             Select(character);

@@ -48,12 +48,12 @@ namespace DAE.HexSystem
                 CardType.Swipe,
                     new ConfigurableMove<TPosition>(board, grid,
                         (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
-                        .TopRight(1)
-                        .Right(1)
-                        .BottomRight(1)
-                        .BottomLeft(1)
-                        .Left(1)
-                        .TopLeft(1)
+                        .TopRight()
+                        .Right()
+                        .BottomRight()
+                        .BottomLeft()
+                        .Left()
+                        .TopLeft()
                         .CollectValidPositions()));
 
             _moves.Add(
@@ -84,7 +84,14 @@ namespace DAE.HexSystem
             return result;
         }
 
-        public void Move(Character<TPosition> piece, TPosition position, CardType cardType)
+        public List<TPosition> AffectedPositionsFor(Character<TPosition> character, TPosition position, CardType cardType)
+        {
+            List<TPosition> positions = new List<TPosition>();
+            positions.Add(position);
+            return positions;
+        }
+
+        public void Execute(Character<TPosition> piece, TPosition position, CardType cardType)
         {
             //var move = _moves[piece.PieceType]
             var move = _moves[cardType]
@@ -92,7 +99,8 @@ namespace DAE.HexSystem
                 .Where(m => m.Positions(piece).Contains(position))
                 .First();
 
-            move.Execute(piece, position);
+            var positions = AffectedPositionsFor(piece, position, cardType);
+            move.Execute(piece, positions);
             //get first executable moves
             //where validMoves contains position
             //execute move

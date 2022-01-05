@@ -15,9 +15,11 @@ namespace DAE.GameSystem
         }
     }
 
-    public class Tile : MonoBehaviour, IPointerClickHandler, IPosition
+    public class Tile : MonoBehaviour, IPosition, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        public event EventHandler<TileEventArgs> Clicked;
+        public event EventHandler<TileEventArgs> Dropped;
+        public event EventHandler<TileEventArgs> DragEntered;
+        public event EventHandler<TileEventArgs> DragExited;
 
         [SerializeField]
         private UnityEvent OnActivate;
@@ -35,15 +37,34 @@ namespace DAE.GameSystem
             }
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public void OnDrop(PointerEventData eventData)
         {
-            OnClicked(new TileEventArgs(this));
+            //Debug.Log("dropped");
+
+            var handler = Dropped;
+            Dropped?.Invoke(this, new TileEventArgs(this));
         }
 
-        protected virtual void OnClicked(TileEventArgs e)
+        public void OnPointerEnter(PointerEventData eventData)
         {
-            var handler = Clicked;
-            handler?.Invoke(this, e);
+            if (eventData.dragging)
+            {
+                //Debug.Log("DragEnter");
+
+                var handler = DragEntered;
+                DragEntered?.Invoke(this, new TileEventArgs(this));
+            }
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (eventData.dragging)
+            {
+                //Debug.Log("DragExit");
+
+                var handler = DragExited;
+                DragExited?.Invoke(this, new TileEventArgs(this));
+            }
         }
     }
 }

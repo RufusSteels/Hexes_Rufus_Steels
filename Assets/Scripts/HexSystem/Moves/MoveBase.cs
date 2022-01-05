@@ -21,15 +21,18 @@ namespace DAE.HexSystem
         public bool CanExecute(Character<TPosition> piece)
             => true;
 
-        public void Execute(Character<TPosition> piece, TPosition position)
+        public void Execute(Character<TPosition> piece, List<TPosition> positions)
         {
-            //Staat er een Piece op Position?
-            if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
-                //Capture Piece
-                Board.Take(toPiece);
+            foreach(TPosition position in positions)
+            {
+                //Staat er een Piece op Position?
+                if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
+                    //Capture Piece
+                    Board.Take(toPiece);
 
-            //Move to position
-            Board.Move(piece, position);
+                //Move to position
+                Board.Move(piece, position);
+            }
         }
 
         public abstract List<TPosition> Positions(Character<TPosition> piece);

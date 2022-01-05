@@ -34,7 +34,7 @@ namespace DAE.GameSystem
     }
 
     [RequireComponent(typeof(Image))]
-    public class CardView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    public class CardView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField]
         private GameObject _cardPrefab;
@@ -82,6 +82,7 @@ namespace DAE.GameSystem
                     player = view.Model;
                 }
             }
+
             var handler = BeganDrag;
             handler?.Invoke(this, new BeginDragEventArgs(player, _cardType));
         }
@@ -90,17 +91,6 @@ namespace DAE.GameSystem
         {
             if (_cardPreview != null)
                 SetDraggedPosition(eventData);
-        }
-
-        private void SetDraggedPosition(PointerEventData data)
-        {
-            var rt = _cardPreview.GetComponent<RectTransform>();
-            Vector3 globalMousePos;
-            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(_draggingPlane, data.position, data.pressEventCamera, out globalMousePos))
-            {
-                rt.position = globalMousePos;
-                rt.rotation = _draggingPlane.rotation;
-            }
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -112,9 +102,15 @@ namespace DAE.GameSystem
             handler?.Invoke(this, new EndDragEventArgs());
         }
 
-        public void OnDrop(PointerEventData eventData)
+        private void SetDraggedPosition(PointerEventData data)
         {
-            throw new System.NotImplementedException();
+            var rt = _cardPreview.GetComponent<RectTransform>();
+            Vector3 globalMousePos;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(_draggingPlane, data.position, data.pressEventCamera, out globalMousePos))
+            {
+                rt.position = globalMousePos;
+                rt.rotation = _draggingPlane.rotation;
+            }
         }
 
         static public T FindInParents<T>(GameObject go) where T : Component

@@ -10,7 +10,7 @@ namespace DAE.HexSystem
         where TPosition : IPosition
     {
         bool CanExecute(Character<TPosition> piece);
-        void Execute(Character<TPosition> piece, TPosition position);
+        void Execute(Character<TPosition> piece, List<TPosition> position);
         List<TPosition> Positions(Character<TPosition> piece);
     }
 }
