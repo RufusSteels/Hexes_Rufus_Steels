@@ -28,6 +28,8 @@ namespace DAE.GameSystem
     [RequireComponent(typeof(Image))]
     public class CardView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
+        public static CardView CurrentCard;
+
         [SerializeField]
         private GameObject _cardPrefab;
         private GameObject _cardPreview;
@@ -72,6 +74,8 @@ namespace DAE.GameSystem
                     player = view.Model;
                 }
             }
+
+            CurrentCard = this;
 
             var handler = BeganDrag;
             handler?.Invoke(this, new BeginDragEventArgs(player, _cardType));

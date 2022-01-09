@@ -17,7 +17,9 @@ namespace DAE.GameSystem
         [SerializeField]
         private Transform _boardParent;
         [SerializeField]
-        private BoardGenerator _boardGenerator;
+        private BoardManager _boardManager;
+        [SerializeField]
+        private CardManager _cardManager;
 
         private Board<Character<Tile>, Tile> _board;
         private Grid<Tile> _grid;
@@ -27,7 +29,6 @@ namespace DAE.GameSystem
         private int _currentPlayerID;
         private CharacterView _currentPlayer;
         private int _playerAmount = 1;
-        private CardType _currentCard = CardType.Teleport;
 
 
         // Start is called before the first frame update
@@ -41,7 +42,7 @@ namespace DAE.GameSystem
             };
             _board.PiecePlaced += (s, e) => SetCurrentPlayer();
 
-            _grid = new Grid<Tile>(2 * _boardGenerator.Distance + 1, 2 * _boardGenerator.Distance + 1);
+            _grid = new Grid<Tile>(2 * _boardManager.Distance + 1, 2 * _boardManager.Distance + 1);
 
             _moveManager = new MoveManager<Tile>(_board, _grid);
 
@@ -49,7 +50,7 @@ namespace DAE.GameSystem
             _selectionManager.Selected += (s, e) =>
             {
                 //e.SelectableItem.Activate = true;
-                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, _currentCard);
+                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, CardView.CurrentCard.CardType);
                 foreach (var tile in tiles)
                 {
                     tile.Highlight = true;
@@ -58,14 +59,15 @@ namespace DAE.GameSystem
             _selectionManager.Deselected += (s, e) =>
             {
                 //e.SelectableItem.Activate = false;
-                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, _currentCard);
+                var tiles = _moveManager.ValidPositionsFor(e.SelectableItem, CardView.CurrentCard.CardType);
                 foreach (var tile in tiles)
                 {
                     tile.Highlight = false;
                 }
             };
 
-            _boardGenerator.ResetBoard();
+            _boardManager.ResetBoard();
+            _cardManager.CreateHand();
 
             ConnectTile();
             ConnectPiece();
@@ -81,23 +83,23 @@ namespace DAE.GameSystem
                 tile.Dropped += (s, e) => Select(e.Tile);
                 tile.DragEntered += (s, e) => 
                 {
-                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, _currentCard);
+                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, CardView.CurrentCard.CardType);
                     foreach (Tile tile in validPositions)
                     {
                         tile.Highlight = false;
                     }
                     if (validPositions.Contains(tile))
                     {
-                        HighlightAffectedTiles(_currentPlayer.Model, tile, _currentCard);
+                        HighlightAffectedTiles(_currentPlayer.Model, tile);
                     }
                     else
                     {
-                        HighlightDroppableTiles(_currentPlayer.Model, _currentCard);
+                        HighlightDroppableTiles(_currentPlayer.Model);
                     }
                 };
                 tile.DragExited += (s, e) =>
                 {
-                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, _currentCard);
+                    var validPositions = _moveManager.ValidPositionsFor(_currentPlayer.Model, CardView.CurrentCard.CardType);
                     foreach (Tile tile in validPositions)
                     {
                         tile.Highlight = false;
@@ -131,7 +133,7 @@ namespace DAE.GameSystem
             CardView[] cards = FindObjectsOfType<CardView>();
             foreach(CardView card in cards)
             {
-                card.BeganDrag  += (s, e) => HighlightDroppableTiles(e.Character, e.CardType);
+                card.BeganDrag  += (s, e) => HighlightDroppableTiles(e.Character);
                 //card.Dragged    += (s, e) => new NotImplementedException();
                 card.EndedDrag += (s, e) => DeselectAll();
                 //card.Dropped    += (s, e) => new NotImplementedException();
@@ -164,11 +166,12 @@ namespace DAE.GameSystem
                     var selectedPiece = _selectionManager.SelectableItem;
                     _selectionManager.Deselect(selectedPiece);
             
-                    var validPositions = _moveManager.ValidPositionsFor(selectedPiece, _currentCard);
+                    var validPositions = _moveManager.ValidPositionsFor(selectedPiece, CardView.CurrentCard.CardType);
                     if (validPositions.Contains(tile))
                     {
                         _selectionManager.DeselectAll();
-                        _moveManager.Execute(selectedPiece, tile, _currentCard);
+                        _moveManager.Execute(selectedPiece, tile, CardView.CurrentCard.CardType);
+                        _cardManager.CycleCard();
                     }
                 }
             }
@@ -190,16 +193,14 @@ namespace DAE.GameSystem
            }
         }
 
-        public void HighlightDroppableTiles(Character<Tile> character, CardType cardType)
+        public void HighlightDroppableTiles(Character<Tile> character)
         {
-            _currentCard = cardType;
             Select(character);
         }
         
-        public void HighlightAffectedTiles(Character<Tile> character, Tile currentTile, CardType cardType)
+        public void HighlightAffectedTiles(Character<Tile> character, Tile currentTile)
         {
-            _currentCard = cardType;
-            var affectedTiles = _moveManager.AffectedPositionsFor(character, currentTile, cardType);
+            var affectedTiles = _moveManager.AffectedPositionsFor(character, currentTile, CardView.CurrentCard.CardType);
             foreach (Tile tile in affectedTiles)
             {
                 tile.Highlight = true;
@@ -208,16 +209,5 @@ namespace DAE.GameSystem
 
         public void DeselectAll()
             => _selectionManager.DeselectAll();
-
-        //public void DebugTile(Tile tile)
-        //{
-        //    var gridPos = _hexPositionHelper.WorldToGridPosition(_board, _grid, tile.transform.localPosition);
-        //    var worldPos = _hexPositionHelper.GridToWorldPosition(_board, _grid, gridPos.x, gridPos.y);
-        //
-        //    Debug.Log($"Tile: {tile.name}, at GP {gridPos},  at WP{worldPos}");
-        //}
-
-        private void OnPieceClicked(Character<Tile> p) 
-            => _selectionManager.Toggle(p);
     }
 }

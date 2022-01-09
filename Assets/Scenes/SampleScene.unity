@@ -513,6 +513,34 @@ PrefabInstance:
     - {fileID: 759107044940794724, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
     - {fileID: 978431619004850742, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+--- !u!4 &1486100187 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6659449512472781823, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+  m_PrefabInstance: {fileID: 1486100186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1527387550 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2189331369560636701, guid: aa8959241c8a04b46bbffabc7e509851, type: 3}
+  m_PrefabInstance: {fileID: 1486100186}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1527387552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527387550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 817a230602cee7a46bb92e476d942f84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _deckSize: 13
+  _handSize: 5
+  _card: {fileID: 5952518479919418928, guid: 5bf85a8e08275854dba5c933d0a950d9, type: 3}
+  _deck: {fileID: 824439507}
+  _hand: {fileID: 1395051764}
+  _discard: {fileID: 1486100187}
 --- !u!1 &1702846150
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +572,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hexPositionHelper: {fileID: 11400000, guid: 5af44d4831dac74479e553638d4d9d61, type: 2}
   _boardParent: {fileID: 1806074809}
-  _boardGenerator: {fileID: 1806074808}
+  _boardManager: {fileID: 1806074808}
+  _cardManager: {fileID: 1527387552}
 --- !u!4 &1702846152
 Transform:
   m_ObjectHideFlags: 0
@@ -591,11 +620,6 @@ MonoBehaviour:
   _hexPositionHelper: {fileID: 11400000, guid: 5af44d4831dac74479e553638d4d9d61, type: 2}
   _tile: {fileID: 4900937599678692349, guid: 614617915d56e1443a482c656782be76, type: 3}
   _distance: 3
-  _deckSize: 13
-  _handSize: 5
-  _deck: {fileID: 824439507}
-  _hand: {fileID: 1395051764}
-  _card: {fileID: 5952518479919418928, guid: 5bf85a8e08275854dba5c933d0a950d9, type: 3}
   _playerPrefab: {fileID: 6228970544599824181, guid: bfe4769546b881d4a94b2afd88f7d829, type: 3}
   _enemyPrefab: {fileID: 1575116122378543804, guid: a9cfbfd6fb03c2d43825eb7d08c06441, type: 3}
   _spawnOdds: 0.373
