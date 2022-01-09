@@ -37,26 +37,9 @@ namespace DAE.GameSystem
             _board.PieceMoved += (s, e) =>
             {
                 _currentPlayerID = (_currentPlayerID + 1) % _playerAmount;
-                var characters = FindObjectsOfType<CharacterView>();
-                foreach (CharacterView character in characters)
-                {
-                    if(character.PlayerID == _currentPlayerID)
-                    {
-                        _currentPlayer = character;
-                    }
-                }
+                SetCurrentPlayer();
             };
-            _board.PiecePlaced += (s, e) =>
-            {
-                var characters = FindObjectsOfType<CharacterView>();
-                foreach (CharacterView character in characters)
-                {
-                    if (character.PlayerID == _currentPlayerID)
-                    {
-                        _currentPlayer = character;
-                    }
-                }
-            };
+            _board.PiecePlaced += (s, e) => SetCurrentPlayer();
 
             _grid = new Grid<Tile>(2 * _boardGenerator.Distance + 1, 2 * _boardGenerator.Distance + 1);
 
@@ -105,7 +88,7 @@ namespace DAE.GameSystem
                     }
                     if (validPositions.Contains(tile))
                     {
-                        tile.Highlight = true;
+                        HighlightAffectedTiles(_currentPlayer.Model, tile, _currentCard);
                     }
                     else
                     {
@@ -156,11 +139,23 @@ namespace DAE.GameSystem
             }
         }
 
+        private void SetCurrentPlayer()
+        {
+            var characters = FindObjectsOfType<CharacterView>();
+            foreach (CharacterView character in characters)
+            {
+                if (character.PlayerID == _currentPlayerID)
+                {
+                    _currentPlayer = character;
+                }
+            }
+        }
+
         public void Select(Tile tile)
         {
-            if (_board.TryGetPiece(tile, out var piece) && piece.PlayerID == _currentPlayerID)
+            if (_board.TryGetPiece(tile, out var character) && character.PlayerID == _currentPlayerID)
             {
-                Select(piece);
+                Select(character);
             }
             else
             {
@@ -201,10 +196,14 @@ namespace DAE.GameSystem
             Select(character);
         }
         
-        public void HighlightAffectedTiles(Character<Tile> character, CardType cardType)
+        public void HighlightAffectedTiles(Character<Tile> character, Tile currentTile, CardType cardType)
         {
             _currentCard = cardType;
-            Select(character);
+            var affectedTiles = _moveManager.AffectedPositionsFor(character, currentTile, cardType);
+            foreach (Tile tile in affectedTiles)
+            {
+                tile.Highlight = true;
+            }
         }
 
         public void DeselectAll()

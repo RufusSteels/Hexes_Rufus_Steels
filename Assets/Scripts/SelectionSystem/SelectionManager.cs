@@ -78,10 +78,10 @@ namespace DAE.SelectionSystem
                 Deselect(_selectableItems.First());
             }
 
-            foreach (TSelectableItem item in _selectableItems)
-            {
-                Deselect(item);
-            }
+            //foreach (TSelectableItem item in _selectableItems)
+            //{
+            //    Deselect(item);
+            //}
         }
 
         protected virtual void OnSelected(SelectionEventArgs<TSelectableItem> e)

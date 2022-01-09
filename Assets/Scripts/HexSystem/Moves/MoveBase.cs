@@ -18,23 +18,26 @@ namespace DAE.HexSystem
             Grid = grid;
             Board = board;
         }
-        public bool CanExecute(Character<TPosition> piece)
+        public bool CanExecute(Character<TPosition> character)
             => true;
 
-        public void Execute(Character<TPosition> piece, List<TPosition> positions)
-        {
-            foreach(TPosition position in positions)
-            {
-                //Staat er een Piece op Position?
-                if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
-                    //Capture Piece
-                    Board.Take(toPiece);
+        public abstract void Execute(Character<TPosition> character, List<TPosition> positions);
+        //{
+        //    foreach(TPosition position in positions)
+        //    {
+        //        //Staat er een Character op Position?
+        //        if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
+        //            //Capture Character
+        //            Board.Take(toPiece);
+        //
+        //        //Move to position
+        //        if (_moves)
+        //            Board.Move(character, position);
+        //    }
+        //}
 
-                //Move to position
-                Board.Move(piece, position);
-            }
-        }
+        public abstract List<TPosition> ValidPositions(Character<TPosition> character);
 
-        public abstract List<TPosition> Positions(Character<TPosition> piece);
+        public abstract List<TPosition> AffectedPositions(Character<TPosition> character, TPosition position);
     }
 }

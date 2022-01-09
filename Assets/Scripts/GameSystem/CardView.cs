@@ -20,15 +20,7 @@ namespace DAE.GameSystem
             CardType = cardType;
         }
     }
-    public class DragEventArgs : EventArgs
-    {
-
-    }
     public class EndDragEventArgs : EventArgs
-    {
-
-    }
-    public class DropEventArgs : EventArgs
     {
 
     }
@@ -57,9 +49,7 @@ namespace DAE.GameSystem
         }
 
         public event EventHandler<BeginDragEventArgs> BeganDrag;
-        public event EventHandler<DragEventArgs> Dragged;
         public event EventHandler<EndDragEventArgs> EndedDrag;
-        public event EventHandler<DropEventArgs> Dropped;
 
         public void OnBeginDrag(PointerEventData eventData)
         {

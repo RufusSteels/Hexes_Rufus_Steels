@@ -16,11 +16,11 @@ namespace DAE.HexSystem
         private Character<TPosition> _piece;
         private List<TPosition> _validPositions = new List<TPosition>();
 
-        public HexMovementHelper(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece)
+        public HexMovementHelper(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> character)
         {
             _board = board;
             _grid = grid;
-            _piece = piece;
+            _piece = character;
         }
 
         public HexMovementHelper<TPosition> TopRight(int maxSteps = int.MaxValue, params Validator[] validators)
@@ -35,8 +35,96 @@ namespace DAE.HexSystem
             => Collect(-1, 0, maxSteps, validators);
         public HexMovementHelper<TPosition> TopLeft(int maxSteps = int.MaxValue, params Validator[] validators)
             => Collect(0, -1, maxSteps, validators);
+
+
         public HexMovementHelper<TPosition> All(params Validator[] validators)
-            => CollectAll(validators);
+        {
+            if (!_board.TryGetPosition(_piece, out var currentPosition))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(currentPosition, out var currentCoordinates))
+                return this;
+
+            var positions = _grid.GetAllPositions();
+            foreach (TPosition position in positions)
+            {
+                if (validators.All((v) => v(_board, _grid, _piece, position)))
+                {
+                    _validPositions.Add(position);
+                }
+            }
+
+            return this;
+        }
+        public HexMovementHelper<TPosition> Current(TPosition position, params Validator[] validators)
+        {
+            _validPositions.Add(position);
+            return this;
+        }
+        public HexMovementHelper<TPosition> Rotate(TPosition position, params Validator[] validators)
+        {
+            if (!_board.TryGetPosition(_piece, out var currentPosition))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(currentPosition, out var currentCoordinates))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(position, out var selectedCoordiates))
+                return this;
+
+            (int q, int r) directionOffset = (selectedCoordiates.x - currentCoordinates.x, selectedCoordiates.y - currentCoordinates.y);
+            (int q, int r) leftOffset = (-directionOffset.r, directionOffset.q + directionOffset.r);
+            (int q, int r) rightOffset = (directionOffset.q + directionOffset.r, -directionOffset.q);
+
+            _validPositions.Add(position);
+            if (_grid.TryGetPositionAt(leftOffset.q + currentCoordinates.x, leftOffset.r + currentCoordinates.y, out var left))
+                _validPositions.Add(left);
+            if (_grid.TryGetPositionAt(rightOffset.q + currentCoordinates.x, rightOffset.r + currentCoordinates.y, out var right))
+                _validPositions.Add(right);
+
+            return this;
+        }
+        public HexMovementHelper<TPosition> Line(TPosition position, params Validator[] validators)
+        {
+            if (!_board.TryGetPosition(_piece, out var currentPosition))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(currentPosition, out var currentCoordinates))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(position, out var selectedCoordiates))
+                return this;
+
+            (int q, int r) direction = (selectedCoordiates.x - currentCoordinates.x, selectedCoordiates.y - currentCoordinates.y);
+
+            if (direction.q > 0 || direction.q < 0)
+                direction.q /= Math.Abs(direction.q);
+            if (direction.r > 0 || direction.r < 0)
+                direction.r /= Math.Abs(direction.r);
+
+            return Collect(direction.q, direction.r);
+        }
+        public HexMovementHelper<TPosition> Push(TPosition position, params Validator[] validators)
+        {
+            if (!_board.TryGetPosition(_piece, out var currentPosition))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(currentPosition, out var currentCoordinates))
+                return this;
+
+            if (!_grid.TryGetCoordinateAt(position, out var selectedCoordiates))
+                return this;
+
+            (int q, int r) direction = (selectedCoordiates.x - currentCoordinates.x, selectedCoordiates.y - currentCoordinates.y);
+
+            if (direction.q > 0 || direction.q < 0)
+                direction.q /= Math.Abs(direction.q);
+            if (direction.r > 0 || direction.r < 0)
+                direction.r /= Math.Abs(direction.r);
+
+            return Collect(2*direction.q, 2*direction.r, 1);
+        }
+
 
         public HexMovementHelper<TPosition> Collect(int xOffset, int yOffset, int maxSteps = int.MaxValue, params Validator[] validators)
         {
@@ -88,39 +176,17 @@ namespace DAE.HexSystem
 
             return this;
         }
-        public HexMovementHelper<TPosition> CollectAll(params Validator[] validators)
-        {
-            if (!_board.TryGetPosition(_piece, out var currentPosition))
-                return this;
 
-            if (!_grid.TryGetCoordinateAt(currentPosition, out var currentCoordinates))
-                return this;
-
-            var positions = _grid.GetAllPositions();
-            foreach (TPosition position in positions)
-            {
-                if(validators.All((v) => v(_board, _grid, _piece, position)))
-                {
-                    _validPositions.Add(position);
-                }
-            }
-
-            return this;
-        }
-
-        public delegate bool Validator(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece, TPosition toPosition);
+        public delegate bool Validator(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> character, TPosition toPosition);
 
         public List<TPosition> CollectValidPositions()
         {
             return _validPositions;
         }
 
-        public static bool Empty(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece, TPosition toPosition)
+        public static bool Empty(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> character, TPosition toPosition)
             => !board.TryGetPiece(toPosition, out var _);
-
-        //public static bool ContainsEnemy(Board<Piece<TPosition>, TPosition> board, Grid<TPosition> grid, Piece<TPosition> piece, TPosition toPosition)
-        //    => !board.TryGetPiece(toPosition, out var toPiece) && toPiece.PlayerID != piece.PlayerID;
-        public static bool ContainsEnemy(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> piece, TPosition toPosition)
-           => board.TryGetPiece(toPosition, out var toPiece) && toPiece.PlayerID != piece.PlayerID;
+        public static bool ContainsEnemy(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, Character<TPosition> character, TPosition toPosition)
+           => board.TryGetPiece(toPosition, out var toPiece) && toPiece.PlayerID != character.PlayerID;
     }
 }

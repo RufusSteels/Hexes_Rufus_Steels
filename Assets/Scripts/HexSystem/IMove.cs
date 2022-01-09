@@ -9,8 +9,9 @@ namespace DAE.HexSystem
     interface IMove <TPosition>
         where TPosition : IPosition
     {
-        bool CanExecute(Character<TPosition> piece);
-        void Execute(Character<TPosition> piece, List<TPosition> position);
-        List<TPosition> Positions(Character<TPosition> piece);
+        bool CanExecute(Character<TPosition> character);
+        void Execute(Character<TPosition> character, List<TPosition> position);
+        List<TPosition> ValidPositions(Character<TPosition> character);
+        List<TPosition> AffectedPositions(Character<TPosition> character, TPosition position);
     }
 }

@@ -19,9 +19,9 @@ namespace DAE.HexSystem
         public MoveManager(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid)
         {
             _board = board;
-            _board.PiecePlaced += (s, e) => e.Piece.PlaceAt(e.AtPosition);
-            _board.PieceTaken += (s, e) => e.Piece.TakeFrom(e.Position);
-            _board.PieceMoved += (s, e) => e.Piece.MoveTo(e.ToPosition);
+            _board.PiecePlaced += (s, e) => e.Character.PlaceAt(e.AtPosition);
+            _board.PieceTaken += (s, e) => e.Character.TakeFrom(e.Position);
+            _board.PieceMoved += (s, e) => e.Character.MoveTo(e.ToPosition);
 
             _grid = grid;
 
@@ -30,7 +30,20 @@ namespace DAE.HexSystem
                     new ConfigurableMove<TPosition>(board, grid,
                         (b, g, p) => new HexMovementHelper<TPosition>(b, g, p)
                         .All(HexMovementHelper<TPosition>.Empty)
-                        .CollectValidPositions()));
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) => new HexMovementHelper<TPosition>(b, g, p)
+                        .Current(pos)
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) => 
+                        { 
+                            foreach (TPosition position in pos)
+                            {
+                                b.Move(p, position);
+                            }
+                        }
+                        ));
 
             _moves.Add(
                 CardType.Pushback,
@@ -42,7 +55,29 @@ namespace DAE.HexSystem
                         .BottomLeft(1)
                         .Left(1)
                         .TopLeft(1)
-                        .CollectValidPositions()));
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) => new HexMovementHelper<TPosition> (b, g, p)
+                        .Rotate(pos)
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) =>
+                        {
+                            foreach (TPosition position in pos)
+                            {
+                                var pushedPosition = new HexMovementHelper<TPosition>(b, g, p)
+                                .Push(position)
+                                .CollectValidPositions();
+                                if (b.TryGetPiece(position, out Character<TPosition> toPiece))
+                                {
+                                    if (pushedPosition.Count > 0)
+                                        b.Move(toPiece, pushedPosition[0]);
+                                    else
+                                        b.Take(toPiece);
+                                }
+                            }
+                        }
+                        ));
 
             _moves.Add(
                 CardType.Swipe,
@@ -54,7 +89,21 @@ namespace DAE.HexSystem
                         .BottomLeft()
                         .Left()
                         .TopLeft()
-                        .CollectValidPositions()));
+                        .CollectValidPositions(), 
+                        
+                        (b, g, p, pos) => new HexMovementHelper<TPosition>(b, g, p)
+                        .Line(pos)
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) =>
+                        {
+                            foreach (TPosition position in pos)
+                            {
+                                if (b.TryGetPiece(position, out Character<TPosition> toPiece))
+                                    b.Take(toPiece);
+                            }
+                        }
+                        ));
 
             _moves.Add(
                 CardType.Slash,
@@ -66,15 +115,29 @@ namespace DAE.HexSystem
                         .BottomLeft(1)
                         .Left(1)
                         .TopLeft(1)
-                        .CollectValidPositions()));
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) => new HexMovementHelper<TPosition>(b, g, p)
+                        .Rotate(pos)
+                        .CollectValidPositions(),
+
+                        (b, g, p, pos) =>
+                        {
+                            foreach (TPosition position in pos)
+                            {
+                                if (b.TryGetPiece(position, out Character<TPosition> toPiece))
+                                    b.Take(toPiece);
+                            }
+                        }
+                        ));
         }
 
-        public List<TPosition> ValidPositionsFor(Character<TPosition> piece, CardType cardType)
+        public List<TPosition> ValidPositionsFor(Character<TPosition> character, CardType cardType)
         {
-            //List<TPosition> result = _moves[piece.PieceType]
+            //List<TPosition> result = _moves[character.PieceType]
             List<TPosition> result = _moves[cardType]
-                .Where((m) => m.CanExecute(piece))
-                .SelectMany((m) => m.Positions(piece))
+                .Where((m) => m.CanExecute(character))
+                .SelectMany((m) => m.ValidPositions(character))
                 .ToList();
             //get all executable Moves
             //foreach move 
@@ -86,21 +149,44 @@ namespace DAE.HexSystem
 
         public List<TPosition> AffectedPositionsFor(Character<TPosition> character, TPosition position, CardType cardType)
         {
-            List<TPosition> positions = new List<TPosition>();
-            positions.Add(position);
-            return positions;
+            List<TPosition> result = _moves[cardType]
+                .Where((m) => m.CanExecute(character))
+                .SelectMany((m) => m.AffectedPositions(character, position))
+                .ToList();
+
+            return result;
+            //List<TPosition> positions = new List<TPosition>();
+            //switch (cardType)
+            //{
+            //    case CardType.Teleport:
+            //        positions.Add(position);
+            //        break;
+            //    case CardType.Swipe:
+            //        foreach (TPosition affectedPosition in new HexMovementHelper<TPosition>(_board, _grid, character).Line(position).CollectValidPositions())
+            //            positions.Add(affectedPosition);
+            //        break;
+            //    case CardType.Slash:
+            //        foreach (TPosition affectedPosition in new HexMovementHelper<TPosition>(_board, _grid, character).Rotate(position).CollectValidPositions())
+            //            positions.Add(affectedPosition);
+            //        break;
+            //    case CardType.Pushback:
+            //        foreach (TPosition affectedPosition in new HexMovementHelper<TPosition>(_board, _grid, character).Rotate(position).CollectValidPositions())
+            //            positions.Add(affectedPosition);
+            //        break;
+            //}
+            //return positions;
         }
 
-        public void Execute(Character<TPosition> piece, TPosition position, CardType cardType)
+        public void Execute(Character<TPosition> character, TPosition position, CardType cardType)
         {
-            //var move = _moves[piece.PieceType]
+            //var move = _moves[character.PieceType]
             var move = _moves[cardType]
-                .Where(m => m.CanExecute(piece))
-                .Where(m => m.Positions(piece).Contains(position))
+                .Where(m => m.CanExecute(character))
+                .Where(m => m.ValidPositions(character).Contains(position))
                 .First();
 
-            var positions = AffectedPositionsFor(piece, position, cardType);
-            move.Execute(piece, positions);
+            var positions = AffectedPositionsFor(character, position, cardType);
+            move.Execute(character, positions);
             //get first executable moves
             //where validMoves contains position
             //execute move
