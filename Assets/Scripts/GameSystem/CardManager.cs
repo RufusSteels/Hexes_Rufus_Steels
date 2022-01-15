@@ -2,6 +2,7 @@ using DAE.CardSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DAE.GameSystem
 {
@@ -13,6 +14,8 @@ namespace DAE.GameSystem
         private int _handSize = 5;
         [SerializeField]
         private GameObject _card;
+        [SerializeField]
+        private Sprite[] _images;
         [SerializeField]
         private Transform _deck;
         [SerializeField]
@@ -32,7 +35,14 @@ namespace DAE.GameSystem
             {
                 var current = Instantiate(_card, _deck);
                 if (current.TryGetComponent<CardView>(out CardView card))
-                    card.CardType = (CardType)UnityEngine.Random.Range(0, 4);
+                {
+                    int type = UnityEngine.Random.Range(0, 4);
+                    card.CardType = (CardType)type;
+                    if(current.TryGetComponent<Image>(out Image image))
+                    {
+                        image.sprite = _images[type];
+                    }
+                }
             }
 
             for (int i = 0; i < _handSize; i++)
