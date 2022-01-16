@@ -11,6 +11,15 @@ namespace DAE.StateSystem
         private string _currentStateName;
         public TState CurrentState => _states[_currentStateName];
 
+        public string InitialState
+        {
+            set
+            {
+                _currentStateName = value;
+                _states[_currentStateName].OnEnter();
+            }
+        }
+
         public void Register(string stateName, TState state)
         {
             _states.Add(stateName, state);

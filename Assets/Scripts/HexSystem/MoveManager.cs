@@ -1,6 +1,7 @@
 using DAE.BoardSystem;
 using DAE.CardSystem;
 using DAE.Commons;
+using DAE.ReplaySystem;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace DAE.HexSystem
         private Board<Character<TPosition>, TPosition> _board;
         private Grid<TPosition> _grid;
 
-        public MoveManager(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid)
+        public MoveManager(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, ReplayManager replayManager)
         {
             _board = board;
             _board.PiecePlaced += (s, e) => e.Character.PlaceAt(e.AtPosition);

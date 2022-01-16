@@ -21,28 +21,33 @@ namespace DAE.GameSystem
 
     public class CharacterView : MonoBehaviour, IPointerClickHandler
     {
-       //[SerializeField]
-       //private PieceType _pieceType;
+        public static CharacterView CurrentPlayer
+        {
+            get
+            {
+                var characters = FindObjectsOfType<CharacterView>();
+                foreach (CharacterView character in characters)
+                {
+                    if (character.PlayerID == CurrentPlayerID)
+                    {
+                        return character;
+                    }
+                }
+                return null;
+            }
+        }
+        public static int CurrentPlayerID = 0;
 
         [SerializeField]
         private int _playerID;
 
-       //public PieceType PieceType => _pieceType;
-        public int PlayerID => _playerID;
-
-        //event betekent dat callback niet van buitenaf kan opgeroepen worden
-        //zorgt ervoor dat ge hem niet kunt overschrijven, enkel specifieke zaken bijvoegen of aftrekken
-        //staat altijd bij een delegate
-
-        //public event Action<Character> CallBack;
-
-        //geen public of private... dan internal -> public in dezelfde assembly
         [SerializeField]
         private UnityEvent<bool> OnHighlight;
         private Character<Tile> _model;
 
         public event EventHandler<ClickEventArgs> Clicked;
 
+        public int PlayerID => _playerID;
         public Character<Tile> Model 
         { 
             get => _model;
@@ -68,6 +73,14 @@ namespace DAE.GameSystem
             }
         }
 
+        public bool Highlight
+        {
+            set
+            {
+                OnHighlight.Invoke(!value);
+            }
+        }
+
         private void OnCharacterPlaced(object sender, CharacterEventArgs<Tile> e)
         {
             gameObject.transform.position = e.Position.transform.position;
@@ -82,14 +95,6 @@ namespace DAE.GameSystem
         private void OnCharacterMoved(object sender, CharacterEventArgs<Tile> e)
         {
             gameObject.transform.position = e.Position.transform.position;
-        }
-
-        public bool Highlight
-        {
-            set
-            {
-                OnHighlight.Invoke(!value);
-            }
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -109,16 +114,5 @@ namespace DAE.GameSystem
             //is hetzelfde als hieronder
             handler?.Invoke(this, e);
         }
-
-        public override string ToString()
-        {
-
-            return "stukje lololololololololololololololololololololololol";
-        }
-
-        //public void OnCharacterActivationChanged(object source, CharacterEventArgs<Tile> eventArgs)
-        //{
-        //    Debug.Log("Activated " + eventArgs.Status);
-        //}
     }
 }
