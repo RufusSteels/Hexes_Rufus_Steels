@@ -36,5 +36,11 @@ namespace DAE.ReplaySystem
             _currentCommand += 1;
             _replayCommands[_currentCommand].Forward();
         }
+
+        public void Append(Action forward, Action backward)
+        {
+            forward();
+            _replayCommands[_replayCommands.Count - 1].Append(forward, backward);
+        }
     }
 }

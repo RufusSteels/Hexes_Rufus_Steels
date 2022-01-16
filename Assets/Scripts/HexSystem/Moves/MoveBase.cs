@@ -1,4 +1,5 @@
 ﻿using DAE.BoardSystem;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,29 +13,18 @@ namespace DAE.HexSystem
     {
         protected Board<Character<TPosition>, TPosition> Board { get; set; }
         protected Grid<TPosition> Grid { get; set; }
+        protected ReplayManager ReplayManager { get; set; }
 
-        protected MoveBase(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid)
+        protected MoveBase(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, ReplayManager replayManager)
         {
             Grid = grid;
             Board = board;
+            ReplayManager = replayManager;
         }
         public bool CanExecute(Character<TPosition> character)
             => true;
 
         public abstract void Execute(Character<TPosition> character, List<TPosition> positions);
-        //{
-        //    foreach(TPosition position in positions)
-        //    {
-        //        //Staat er een Character op Position?
-        //        if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
-        //            //Capture Character
-        //            Board.Take(toPiece);
-        //
-        //        //Move to position
-        //        if (_moves)
-        //            Board.Move(character, position);
-        //    }
-        //}
 
         public abstract List<TPosition> ValidPositions(Character<TPosition> character);
 

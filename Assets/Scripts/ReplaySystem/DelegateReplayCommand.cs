@@ -17,6 +17,12 @@ namespace DAE.ReplaySystem
             _backward = backward;
         }
 
+        public void Append(Action forward, Action backward)
+        {
+            _forward += forward;
+            _backward += backward;
+        }
+
         public void Backward()
             => _backward();
 

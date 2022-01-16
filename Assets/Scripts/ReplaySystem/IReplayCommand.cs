@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,5 +9,6 @@ namespace DAE.ReplaySystem
     {
         void Forward();
         void Backward();
+        void Append(Action forward, Action backward);
     }
 }

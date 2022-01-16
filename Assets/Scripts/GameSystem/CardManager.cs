@@ -1,4 +1,6 @@
 using DAE.CardSystem;
+using DAE.ReplaySystem;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +24,7 @@ namespace DAE.GameSystem
         private Transform _hand;
         [SerializeField]
         private Transform _discard;
+        public ReplayManager ReplayManager { get; set; }
 
         private void OnValidate()
         {
@@ -53,12 +56,28 @@ namespace DAE.GameSystem
 
         public void CycleCard()
         {
-            CardView.CurrentCard.transform.SetParent(_discard);
+            Transform discarded = null;
+            Transform drawn = null;
 
-            if(_deck.childCount > 0)
+            Action forward = () =>
             {
-                _deck.GetChild(0).SetParent(_hand);
-            }
+                discarded = CardView.CurrentCard.transform;
+                discarded.SetParent(_discard);
+
+                if (_deck.childCount > 0)
+                {
+                    drawn = _deck.GetChild(0);
+                    drawn.SetParent(_hand);
+                }
+            };
+
+            Action backward = () =>
+            {
+                discarded.SetParent(_hand);
+                drawn.SetParent(_deck);
+            };
+
+            ReplayManager.Append(forward, backward);
         }
     }
 }

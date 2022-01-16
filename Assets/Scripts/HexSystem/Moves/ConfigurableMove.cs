@@ -1,4 +1,5 @@
 ﻿using DAE.BoardSystem;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace DAE.HexSystem
         private PositionExecutionHandler _executeAtPositions;
 
 
-        public ConfigurableMove(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, PositionsCollector positionsCollector, AffectedPositionsCollector affectedPositionsCollector, PositionExecutionHandler positionExecutionHandler) : base(board, grid)
+        public ConfigurableMove(Board<Character<TPosition>, TPosition> board, Grid<TPosition> grid, ReplayManager replayManager, PositionsCollector positionsCollector, AffectedPositionsCollector affectedPositionsCollector, PositionExecutionHandler positionExecutionHandler) : base(board, grid, replayManager)
         {
             _collectValidPositions = positionsCollector;
             _collectAffectedPositions = affectedPositionsCollector;
@@ -28,19 +29,6 @@ namespace DAE.HexSystem
 
         public override void Execute(Character<TPosition> character, List<TPosition> positions)
             => _executeAtPositions(Board, Grid, character, positions);
-        //{
-        //    foreach (TPosition position in positions)
-        //    {
-        //        //Staat er een Character op Position?
-        //        if (Board.TryGetPiece(position, out Character<TPosition> toPiece))
-        //            //Capture Character
-        //            Board.Take(toPiece);
-        //
-        //        //Move to position
-        //        if (_moves)
-        //            Board.Move(character, position);
-        //    }
-        //}
 
         public override List<TPosition> ValidPositions(Character<TPosition> character)
             => _collectValidPositions(Board, Grid, character);

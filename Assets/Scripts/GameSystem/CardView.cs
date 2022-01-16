@@ -35,6 +35,9 @@ namespace DAE.GameSystem
         private GameObject _cardPreview;
         private RectTransform _draggingPlane;
 
+        public event EventHandler<BeginDragEventArgs> BeganDrag;
+        public event EventHandler<EndDragEventArgs> EndedDrag;
+
         [SerializeField]
         private CardType _cardType = CardType.Teleport;
 
@@ -49,9 +52,6 @@ namespace DAE.GameSystem
                 _cardType = value;
             }
         }
-
-        public event EventHandler<BeginDragEventArgs> BeganDrag;
-        public event EventHandler<EndDragEventArgs> EndedDrag;
 
         public void OnBeginDrag(PointerEventData eventData)
         {

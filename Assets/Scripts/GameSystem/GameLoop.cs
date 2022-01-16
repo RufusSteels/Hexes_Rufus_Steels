@@ -17,8 +17,6 @@ namespace DAE.GameSystem
         private HexPositionHelper _hexPositionHelper;
 
         [SerializeField]
-        private Transform _boardParent;
-        [SerializeField]
         private BoardManager _boardManager;
         [SerializeField]
         private CardManager _cardManager;
@@ -34,6 +32,7 @@ namespace DAE.GameSystem
             var grid = new Grid<Tile>(2 * _boardManager.Distance + 1, 2 * _boardManager.Distance + 1);
             var replayManager = new ReplayManager();
             _moveManager = new MoveManager<Tile>(board, grid, replayManager);
+            _cardManager.ReplayManager = replayManager;
 
             _gameStateMachine = new StateMachine<GameStateBase>();
             _gameStateMachine.Register(GameStateBase.PlayingState, new GameStatePlaying(_gameStateMachine, board, grid, replayManager, _cardManager));
@@ -78,7 +77,6 @@ namespace DAE.GameSystem
                     {
                         tile.Highlight = false;
                     }
-                    //HighlightDroppableTiles(CharacterView.CurrentPlayer.Model);
                 };
                 grid.Register(tile, q + grid.Columns / 2, r + grid.Rows / 2);
             }
@@ -109,10 +107,7 @@ namespace DAE.GameSystem
             foreach(CardView card in cards)
             {
                 card.BeganDrag  += (s, e) => HighlightDroppableTiles(e.Character);
-                //card.Dragged    += (s, e) => new NotImplementedException();
                 card.EndedDrag += (s, e) => _gameStateMachine.CurrentState.DeselectAll();
-                //card.Dropped    += (s, e) => new NotImplementedException();
-                //card.Dropped += (s, e) => DeselectAll();
             }
         }
 
@@ -138,6 +133,14 @@ namespace DAE.GameSystem
             {
                 tile.Highlight = true;
             }
+
+
         }
+
+        public void Backward()
+            => _gameStateMachine.CurrentState.Backward();
+
+        public void Forward()
+            => _gameStateMachine.CurrentState.Forward();
     }
 }
