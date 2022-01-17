@@ -30,6 +30,7 @@ namespace DAE.HexSystem
             _moves.Add(CardType.Pushback, new MovePush<TPosition>(board, grid, replayManager));
             _moves.Add(CardType.Swipe, new MoveSwipe<TPosition>(board, grid, replayManager));
             _moves.Add(CardType.Slash, new MoveSlash<TPosition>(board, grid, replayManager));
+            _moves.Add(CardType.Bomb, new MoveBomb<TPosition>(board, grid, replayManager));
         }
 
         public List<TPosition> ValidPositionsFor(Character<TPosition> character, CardType cardType)

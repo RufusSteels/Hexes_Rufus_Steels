@@ -124,6 +124,27 @@ namespace DAE.HexSystem
 
             return Collect(2*direction.q, 2*direction.r, 1);
         }
+        public HexMovementHelper<TPosition> Surround(TPosition position, params Validator[] validators)
+        {
+            if (!_grid.TryGetCoordinateAt(position, out var selectedCoordinates))
+                return this;
+
+            _validPositions.Add(position);
+            if(_grid.TryGetPositionAt(selectedCoordinates.x + 1, selectedCoordinates.y - 1, out var newPosition0))
+                _validPositions.Add(newPosition0);
+            if (_grid.TryGetPositionAt(selectedCoordinates.x + 1, selectedCoordinates.y, out var newPosition1))
+                _validPositions.Add(newPosition1);
+            if (_grid.TryGetPositionAt(selectedCoordinates.x, selectedCoordinates.y + 1, out var newPosition2))
+                _validPositions.Add(newPosition2);
+            if (_grid.TryGetPositionAt(selectedCoordinates.x - 1, selectedCoordinates.y + 1, out var newPosition3))
+                _validPositions.Add(newPosition3);
+            if (_grid.TryGetPositionAt(selectedCoordinates.x - 1, selectedCoordinates.y, out var newPosition4))
+                _validPositions.Add(newPosition4);
+            if (_grid.TryGetPositionAt(selectedCoordinates.x, selectedCoordinates.y - 1, out var newPosition5))
+                _validPositions.Add(newPosition5);
+
+            return this;
+        }
 
 
         public HexMovementHelper<TPosition> Collect(int xOffset, int yOffset, int maxSteps = int.MaxValue, params Validator[] validators)

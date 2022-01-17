@@ -15,6 +15,8 @@ namespace DAE.GameSystem
         [SerializeField]
         private int _handSize = 5;
         [SerializeField]
+        private int _cardTypeAmount = 5;
+        [SerializeField]
         private GameObject _card;
         [SerializeField]
         private Sprite[] _images;
@@ -39,7 +41,7 @@ namespace DAE.GameSystem
                 var current = Instantiate(_card, _deck);
                 if (current.TryGetComponent<CardView>(out CardView card))
                 {
-                    int type = UnityEngine.Random.Range(0, 4);
+                    int type = UnityEngine.Random.Range(0, _cardTypeAmount);
                     card.CardType = (CardType)type;
                     if(current.TryGetComponent<Image>(out Image image))
                     {

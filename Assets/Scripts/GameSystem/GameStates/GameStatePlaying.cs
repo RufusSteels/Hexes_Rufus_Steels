@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DAE.GameSystem
 {
@@ -40,6 +41,7 @@ namespace DAE.GameSystem
             _selectionManager.Selected += OnPieceSelected;
             _selectionManager.Deselected += OnPieceDeselected;
             _board.PieceMoved += OnPieceMoved;
+            _board.PieceTaken += OnPieceTaken;
         }
 
         public override void OnExit()
@@ -120,6 +122,15 @@ namespace DAE.GameSystem
         private void OnPieceMoved(object source, PieceMovedEventArgs<Character<Tile>, Tile> eventArgs)
         {
             _currentPlayerID = (_currentPlayerID + 1) % _playerAmount;
+        }
+
+        private void OnPieceTaken(object source, PieceTakenEventArgs<Character<Tile>, Tile> eventArgs)
+        {
+            if (eventArgs.Character.PlayerID == _currentPlayerID)
+            {
+                Debug.Log("Player Taken");
+                StateMachine.MoveTo(GameStateBase.EndState);
+            }
         }
     }
 }

@@ -24,6 +24,13 @@ namespace DAE.GameSystem
 
         private StateMachine<GameStateBase> _gameStateMachine;
 
+        [SerializeField]
+        private Screen _startScreen;
+        [SerializeField]
+        private Screen _playScreen;
+        [SerializeField]
+        private Screen _endScreen;
+
 
         // Start is called before the first frame update
         void Start()
@@ -34,17 +41,20 @@ namespace DAE.GameSystem
             _moveManager = new MoveManager<Tile>(board, grid, replayManager);
             _cardManager.ReplayManager = replayManager;
 
-            _gameStateMachine = new StateMachine<GameStateBase>();
-            _gameStateMachine.Register(GameStateBase.PlayingState, new GameStatePlaying(_gameStateMachine, board, grid, replayManager, _cardManager));
-            _gameStateMachine.Register(GameStateBase.ReplayingState, new GameStateReplay(_gameStateMachine, replayManager));
-            _gameStateMachine.InitialState = GameStateBase.PlayingState;
-
             _boardManager.ResetBoard();
             _cardManager.CreateHand();
 
             ConnectTile(grid);
             ConnectPiece(board, grid);
             ConnectCards();
+
+            _gameStateMachine = new StateMachine<GameStateBase>();
+            _gameStateMachine.Register(GameStateBase.PlayingState, new GameStatePlaying(_gameStateMachine, board, grid, replayManager, _cardManager));
+            _gameStateMachine.Register(GameStateBase.ReplayingState, new GameStateReplay(_gameStateMachine, replayManager));
+            _gameStateMachine.Register(GameStateBase.StartState, new GameStateStart(_gameStateMachine, _startScreen, _playScreen));
+            _gameStateMachine.Register(GameStateBase.EndState, new GameStateEnd(_gameStateMachine, _endScreen, _playScreen));
+            _gameStateMachine.InitialState = GameStateBase.StartState;
+
         }
 
         private void ConnectTile(Grid<Tile> grid)

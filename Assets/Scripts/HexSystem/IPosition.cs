@@ -8,6 +8,7 @@ namespace DAE.HexSystem
 {
     public interface IPosition
     {
-
+        void Disable();
+        void Enable();
     }
 }

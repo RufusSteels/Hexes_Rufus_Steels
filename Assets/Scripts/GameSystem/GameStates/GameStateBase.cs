@@ -13,6 +13,8 @@ namespace DAE.GameSystem
     {
         public const string PlayingState = "Playing";
         public const string ReplayingState = "Replaying";
+        public const string StartState = "Start";
+        public const string EndState = "End";
 
         private StateMachine<GameStateBase> _stateMachine;
         public StateMachine<GameStateBase> StateMachine => _stateMachine;

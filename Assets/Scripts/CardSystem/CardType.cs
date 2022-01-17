@@ -8,6 +8,6 @@ namespace DAE.CardSystem
 {
     public enum CardType
     {
-        Teleport, Swipe, Slash, Pushback
+        Teleport, Swipe, Slash, Pushback, Bomb
     }
 }
